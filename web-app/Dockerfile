@@ -6,6 +6,6 @@ RUN npm i -g pnpm \
   && pnpm i \
   && pnpm build
 
-FROM nginx
+FROM nginx:latest
 
 COPY --from=build /app/dist /usr/share/nginx/html
