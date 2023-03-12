@@ -1,10 +1,12 @@
 version: '3.5'
 services:
   koa-app:
-    image: node:latest
+    build:
+      context: ./koa-app
     ports:
       - 3000:3000
   web-app:
-    image: nginx:latest
+    build:
+      context: ./web-app
     ports:
       - 80:80
