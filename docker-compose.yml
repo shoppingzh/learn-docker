@@ -1,6 +1,7 @@
 version: '3.5'
 services:
   db:
+    container_name: learn-docker-db
     image: mysql
     ports:
       - 3306:3006
@@ -11,6 +12,7 @@ services:
       - MYSQL_DATABASE=hello
     command: --default-authentication-plugin=mysql_native_password
   koa-app:
+    container_name: learn-docker-server
     build:
       context: ./koa-app
     ports:
@@ -18,6 +20,7 @@ services:
     depends_on:
       - db
   web-app:
+    container_name: learn-docker-web
     build:
       context: ./web-app
     ports:
