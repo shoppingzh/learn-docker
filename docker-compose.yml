@@ -1,10 +1,22 @@
 version: '3.5'
 services:
+  db:
+    image: mysql
+    ports:
+      - 3306:3006
+    volumes:
+      - D:/xpzheng/learn-docker/db:/var/lib/mysql:bind
+    environment:
+      - MYSQL_ROOT_PASSWORD=xpzheng
+      - MYSQL_DATABASE=hello
+    command: --default-authentication-plugin=mysql_native_password
   koa-app:
     build:
       context: ./koa-app
     ports:
       - 3000:3000
+    depends_on:
+      - db
   web-app:
     build:
       context: ./web-app
