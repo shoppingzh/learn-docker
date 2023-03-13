@@ -5,7 +5,7 @@ const Router = require('@koa/router')
 const redis = require('./redis')
 
 const app = new Koa()
-const router = new Router()
+const router = new Router({})
 
 // function query(sql) {
 //   return new Promise((resolve, reject) => {
@@ -17,7 +17,7 @@ const router = new Router()
 // }
 
 router.get('/', ctx => {
-  ctx.redirect('/hello')
+  ctx.redirect('hello')
 })
 
 router.get('/hello', ctx => {
@@ -30,7 +30,11 @@ router.get('/hello', ctx => {
 // })
 
 router.get('/count', async(ctx) => {
-  ctx.body = await redis.incr('count')
+  try {
+    ctx.body = await redis.incr('count')
+  } catch {
+    ctx.body = 'Error'
+  }
 })
 
 app
