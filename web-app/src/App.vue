@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import axios from 'axios'
-import { ref } from 'vue';
+import { ref } from 'vue'
+import service from './service'
 
 const msg = ref('')
 
-axios.get('http://localhost:3000').then(res => {
+service.get('/').then(res => {
   msg.value = res.data
 })
 </script>
