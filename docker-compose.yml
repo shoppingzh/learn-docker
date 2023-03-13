@@ -1,32 +1,36 @@
 version: '3.5'
 services:
-  # db:
-  #   container_name: learn-docker-db
-  #   image: mysql
-  #   ports:
-  #     - 3308:3006
-  #   volumes:
-  #     - ./db:/var/lib/mysql:bind
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=xpzheng
-  #     - MYSQL_DATABASE=hello
-  #   command: --default-authentication-plugin=mysql_native_password
+  db:
+    container_name: learn-docker-db
+    image: mysql
+    ports:
+      - 3308:3306
+    volumes:
+      - ./db:/var/lib/mysql:bind
+    environment:
+      - MYSQL_ROOT_PASSWORD=xpzheng
+      - MYSQL_DATABASE=hello
+    command: --default-authentication-plugin=mysql_native_password
   redis:
     image: redis
     ports:
       - 6379:6379
-  koa-app:
+  server:
     container_name: learn-docker-server
     build:
       context: ./koa-app
     ports:
       - 3000:3000
     depends_on:
-      # - db
+      - db
       - redis
-  web-app:
+  web:
     container_name: learn-docker-web
     build:
       context: ./web-app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:bind
     ports:
       - 80:80
+    depends_on:
+      - server
