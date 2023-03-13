@@ -4,6 +4,14 @@ import service from './service'
 
 const msg = ref('')
 
+async function load() {
+  const hello = (await service.get('/')).data
+  const count = (await service.get('/count')).data
+  msg.value = `${hello}, ${count}`
+}
+
+load()
+
 service.get('/').then(res => {
   msg.value = res.data
 })

@@ -6,7 +6,7 @@ const redis = require('./redis')
 const waitPort = require('wait-port')
 
 const app = new Koa()
-const router = new Router({})
+const router = new Router()
 let db
 
 function query(sql) {
@@ -43,15 +43,14 @@ app
   .use(cors())
   .use(router.routes())
   .use(router.allowedMethods())
+  .use(async(ctx, next) => {
+    const times = await redis.incr('count')
+    ctx.body = `404 ${times}times`
+    next()
+  })
 
 ;(async function() {
   try {
-    // await waitPort({
-    //   host: 'db',
-    //   port: 3308,
-    //   timeout: 10000,
-    //   waitForDns: true,
-    // })
     db = createPool()
     await redis.connect()
   } catch (err) {

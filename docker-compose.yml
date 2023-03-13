@@ -1,10 +1,8 @@
 version: '3.5'
 services:
   db:
-    container_name: learn-docker-db
+    container_name: db
     image: mysql
-    ports:
-      - 3308:3306
     volumes:
       - ./db:/var/lib/mysql:bind
     environment:
@@ -13,10 +11,10 @@ services:
     command: --default-authentication-plugin=mysql_native_password
   redis:
     image: redis
-    ports:
-      - 6379:6379
+    volumes:
+      - ./redis-db:/data:bind
   server:
-    container_name: learn-docker-server
+    container_name: server
     build:
       context: ./koa-app
     ports:
@@ -25,7 +23,7 @@ services:
       - db
       - redis
   web:
-    container_name: learn-docker-web
+    container_name: web
     build:
       context: ./web-app
     volumes:
