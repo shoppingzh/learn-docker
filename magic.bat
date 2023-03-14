@@ -1,6 +1,7 @@
 mkdir magic
 cd magic
 git clone https://github.com/shoppingzh/learn-docker.git
+cd learn-docker
 
 docker compose up -d
 
