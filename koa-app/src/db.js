@@ -1,8 +1,9 @@
 const mysql = require('mysql')
+const { MYSQL_HOST } = require('./config')
 
 exports.createPool = function() {
   return mysql.createPool({
-    host: 'db',
+    host: MYSQL_HOST,
     port: '3306',
     user: 'root',
     password: 'xpzheng',

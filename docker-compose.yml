@@ -19,6 +19,9 @@ services:
       context: ./koa-app
     ports:
       - 3000:3000
+    environment:
+      - MYSQL_HOST=db
+      - REDIS_HOST=redis
     depends_on:
       - db
       - redis
