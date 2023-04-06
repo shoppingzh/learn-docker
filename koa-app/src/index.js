@@ -1,7 +1,7 @@
 const Koa = require('koa')
 const cors = require('@koa/cors')
 const Router = require('@koa/router')
-const { createPool } = require('./db')
+const { createPool, init } = require('./db')
 const redis = require('./redis')
 const waitPort = require('wait-port')
 
@@ -18,6 +18,18 @@ function query(sql) {
   })
 }
 
+function execute(sql) {
+  return new Promise((resolve, reject) => {
+    db.getConnection((err, conn) => {
+      if (err) return reject(err)
+      conn.execute(sql, err2 => {
+        if (err2) return reject(err2)
+        resolve()
+      })
+    })
+  })
+}
+
 router.get('/', ctx => {
   ctx.redirect('hello')
 })
@@ -26,9 +38,20 @@ router.get('/hello', ctx => {
   ctx.body = 'Hello, Koa!'
 })
 
-router.get('/db', async(ctx) => {
-  const [count] = await query('SELECT 1 + 1 AS result')
-  ctx.body = count.result
+router.get('/blog/add', async(ctx) => {
+  if (!ctx.query.title || !ctx.query.text) {
+    ctx.body = '请传入标题与内容'
+    return
+  }
+  await execute(`
+    insert into t_blog (title, text) values ('${ctx.query.title}', '${ctx.query.text}')
+  `)
+  ctx.body = true
+})
+
+router.get('/blog/list', async(ctx) => {
+  const result = await query(`select * from t_blog`)
+  ctx.body = result
 })
 
 router.get('/count', async(ctx) => {
@@ -52,6 +75,7 @@ app
 ;(async function() {
   try {
     db = createPool()
+    await init();
     await redis.connect()
   } catch (err) {
     console.error(err)

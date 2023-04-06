@@ -3,6 +3,8 @@ services:
   db:
     container_name: db
     image: mysql
+    ports:
+      - 3306:3306
     volumes:
       - ./db:/var/lib/mysql:bind
     environment:

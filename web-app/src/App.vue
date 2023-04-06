@@ -1,41 +1,57 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import service from './service'
 
-const msg = ref('')
-const count = ref('')
-const mysql = ref('')
-
-async function load() {
-  const hello = (await service.get('/')).data
-  msg.value = `${hello}`
+interface Blog {
+  title?: string
+  text?: string
 }
 
-async function inc() {
-  const { data } = await service.get('/count')
-  count.value = data
+const list = ref<Blog[]>([])
+const model = reactive<Blog>({
+  title: '',
+  text: '',
+})
+
+async function loadList() {
+  const { data } = await service.get('/blog/list')
+  list.value = data || []
 }
 
-async function loadDb() {
-  const { data } = await service.get('/db')
-  mysql.value = data
+async function submit() {
+  const pass = confirm('确定提交？')
+  if (!pass) return
+  await service.get('/blog/add', {
+    params: model
+  })
+  loadList()
 }
 
-load()
-inc()
-loadDb()
+loadList()
 </script>
 
 <template>
-  <div style="text-align: center;">
-    <div class="msg">
-      {{ msg }}
+  <div>
+    <div v-for="(item, index) in list" :key="index">
+      <h2>{{ item.title }}</h2>
+      <p>
+        {{ item.text }}
+      </p>
+    </div>
+  </div>
+
+  <hr>
+
+  <div>
+    <div>
+      <input type="text" v-model="model.title" placeholder="博客标题" style="width: 400px; padding: 5px;" />
     </div>
     <div style="margin-top: 10px;">
-      <button @click="inc">Redis +{{ count }}</button>
+      <textarea v-model="model.text" placeholder="博客内容" rows="5" style="width: 400px; padding: 5px;" />
     </div>
-
-    <div style="margin-top: 10px;">From Mysql: {{ mysql }}</div>
+    <div style="margin-top: 10px;">
+      <button @click="submit">提交</button>
+    </div>
   </div>
 </template>
 
@@ -48,10 +64,8 @@ html, body, #app {
   padding: 0;
   height: 100%;
 }
-#app {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+body {
+  padding: 20px;
 }
 </style>
 
