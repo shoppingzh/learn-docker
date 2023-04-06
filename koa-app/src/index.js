@@ -2,8 +2,6 @@ const Koa = require('koa')
 const cors = require('@koa/cors')
 const Router = require('@koa/router')
 const { createPool, init } = require('./db')
-const redis = require('./redis')
-const waitPort = require('wait-port')
 
 const app = new Koa()
 const router = new Router()
@@ -54,21 +52,11 @@ router.get('/blog/list', async(ctx) => {
   ctx.body = result
 })
 
-router.get('/count', async(ctx) => {
-  try {
-    ctx.body = await redis.incr('count')
-  } catch {
-    ctx.body = 'Error'
-  }
-})
-
 app
   .use(cors())
   .use(router.routes())
   .use(router.allowedMethods())
   .use(async(ctx, next) => {
-    const times = await redis.incr('count')
-    ctx.body = `404 ${times}times`
     next()
   })
 
@@ -76,7 +64,6 @@ app
   try {
     db = createPool()
     await init();
-    await redis.connect()
   } catch (err) {
     console.error(err)
   }
