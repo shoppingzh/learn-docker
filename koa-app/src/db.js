@@ -1,12 +1,12 @@
 const mysql = require('mysql2')
-const { MYSQL_HOST } = require('./config')
+const { MYSQL_HOST, MYSQL_PORT } = require('./config')
 
 let pool
 
 exports.createPool = function() {
   pool = mysql.createPool({
     host: MYSQL_HOST,
-    port: '3306',
+    port: MYSQL_PORT,
     user: 'root',
     password: 'xpzheng',
     database: 'hello',

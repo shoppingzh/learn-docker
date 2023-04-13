@@ -3,8 +3,8 @@ services:
   db:
     container_name: db
     image: mysql
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3308:3306
     volumes:
       - ./db:/var/lib/mysql:bind
     environment:
@@ -19,10 +19,11 @@ services:
     container_name: server
     build:
       context: ./koa-app
-    ports:
-      - 3000:3000
+    # ports:
+    #   - 3000:3000
     environment:
       - MYSQL_HOST=db
+      - MYSQL_PORT=3306
       - REDIS_HOST=redis
     depends_on:
       - db
